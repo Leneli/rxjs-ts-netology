@@ -1,9 +1,35 @@
+import { fromEvent } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
+import { map, pluck } from 'rxjs/operators';
+import { ELEMENT_IDENT } from './constants/elementIdents';
+import { API_ENDPOINT } from './constants/endpounts';
 
-const data$ = ajax.getJSON('https://api.github.com/search/repositories?q=rxjs');
+const form = document.forms[0];
+const observable = fromEvent(form, 'submit')
 
-data$.subscribe((value) => console.log('data$ value', value));
+observable.subscribe((event) => {
+  event.preventDefault();
 
-const dataGitLab$ = ajax.getJSON('https://gitlab.com/api/v4/projects?search=nodejs');
+  try {
+    const formElements = (event.target as HTMLFormElement).elements;
+    const query = ([...formElements] as HTMLInputElement[]).find((elem) => elem.id === ELEMENT_IDENT.QUERY_INPUT_ID);
+    const type = ([...formElements] as HTMLInputElement[]).find((elem) => elem.name === ELEMENT_IDENT.RADIO_INPUT_NAME && elem.checked);
+    const url = type.id === ELEMENT_IDENT.RADIO_GITHUB_ID
+      ? API_ENDPOINT.GET_GITHUB(query.value)
+      : API_ENDPOINT.GET_GITLAB(query.value);
 
-dataGitLab$.subscribe((value) => console.log('dataGitLab$ value', value));
+    const data = ajax
+      .getJSON(url)
+      .pipe(
+        map((res) => {
+          if (Array.isArray(res)) return {items: res};
+          return res;
+        }),
+        pluck('items')
+      );
+
+    data.subscribe(console.log);
+  } catch (error) {
+    console.log("🚀 observable.subscribe ~ error:", error)
+  }
+});

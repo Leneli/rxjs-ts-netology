@@ -3,11 +3,55 @@
 <head>
   <script src="https://cdn.rawgit.com/chinchang/screenlog.js/2da51db0/dist/screenlog.min.js"></script>
 
+  <style>
+    .form {
+      padding: 54px 16px;
+      border-bottom: 1px solid gray;
+    }
+
+    .row {
+      display: flex;
+    }
+
+    .input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid gainsboro;
+      border-right-width: 0;
+      border-radius: 0;
+    }
+
+    .button {
+      border: 1px solid gainsboro;
+      border-radius: 0;
+      padding: 0 24px;
+    }
+
+    .button:hover {
+      opacity: 0.5;
+    }
+  </style>
 </head>
 
 <body>
 
-<!--<input type="text">-->
+  <form class="form">
+    <div class="row">
+      <input type="text" name="query" id="query" class="input">
+      <button type="submit" class="button">Найти</button>
+    </div>
+
+    <p>искать на:</p>
+
+    <div>
+      <input type="radio" name="git" id="github" checked>
+      <label for="github">GITHUB</label>
+    </div>
+    <div>
+      <input type="radio" name="git" id="gitlab">
+      <label for="gitlab">GITLAB</label>
+    </div>
+  </form>
 
   <script>
     screenLog.init();
